@@ -1,23 +1,35 @@
 import { useDispatch } from "react-redux";
-import { updateProgress, updateReport } from "../slice/progressSlice";
-import { useRef } from "react";  
+import { setScanId, updateProgress, updateReport } from "../slice/progressSlice";
+import { useRef } from "react";
+import { v4 as uuidv4 } from "uuid"; 
+// let socket = null;   
 
 export const useWebSocketTask = (deviceId,handleScanCompleted) => {
     const wsRef = useRef(null);
     const dispatch = useDispatch();
 
     const startTask = () => {
+        // const ws = new WebSocket(`ws://10.107.190.46:8000/ws/frontend/${deviceId}`);
+        // wsRef.current = ws;
         if (wsRef.current) {
             console.log("Socket already running");
             return;
         }
 
-        const ws = new WebSocket(`ws://localhost:8000/ws/frontend/${deviceId}`);
-        wsRef.current = ws;
+        const ws= new WebSocket(`ws://localhost:8000/ws/frontend/${deviceId}`);
+        wsRef.current=ws;
+
+        const scanId = uuidv4();
+        dispatch(setScanId({scanId: scanId}))
+        console.log("Generated scan ID:", scanId);
+
 
         ws.onopen = () => {
             console.log("Connected");
-            ws.send(JSON.stringify({ event: "START_SCAN", deviceId: deviceId }));
+            ws.send(JSON.stringify({ 
+                event: "START_SCAN", 
+                scan_id: scanId, 
+                device_id: deviceId }));
         };
 
         ws.onmessage = (event) => {
@@ -29,10 +41,14 @@ export const useWebSocketTask = (deviceId,handleScanCompleted) => {
             }
 
             if (data.event === "SCAN_COMPLETED") {
-                handleScanCompleted();
+                console.log("SCAN COMPLETED")
+                 //closure to handle completion
             }
 
-            if (data.event === "FILE_COUNT") {
+            if (data.event == "FILE_COUNT"){
+                console.log("File result reached");
+                handleScanCompleted();
+                console.log("DATA: ", data.value)
                 const totalThreats = data.value.totalThreats;
                 const low = data.value.safe;
                 const medium = data.value.quarantine;
@@ -46,8 +62,7 @@ export const useWebSocketTask = (deviceId,handleScanCompleted) => {
                 }));
 
                 ws.close();
-                wsRef.current = null; // IMPORTANT
-            }
+            }   
         };
 
         ws.onclose = () => {

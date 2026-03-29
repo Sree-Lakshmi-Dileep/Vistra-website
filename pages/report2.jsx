@@ -290,15 +290,43 @@ const stylesCSS = `
     font-weight: 600;
   }
 
-  .delete {
-    border-color: #ff3250;
-    color: #ff3250;
-  }
+  /* Base button styles */
+.delete {
+  border: 2px solid #ff3250;     
+  color: #ff3250;                 
+  background: transparent;       
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
 
-  .keep {
-    border-color: #00ff96;
-    color: #00ff96;
-  }
+.keep {
+  border: 2px solid #00ff96;      /* green border */
+  color: #00ff96;                 /* green text */
+  background: transparent;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover effect */
+.delete:hover {
+  transform: scale(1.05);           /* grows slightly */
+  background-color: rgba(255,50,80,0.1);  /* subtle red background on hover */
+}
+
+.keep:hover {
+  transform: scale(1.05);
+  background-color: rgba(0,255,150,0.1);   /* subtle green background on hover */
+}
+
+.delete:active, .keep:active {
+  transform: scale(0.95);          
+
 
   .no-data {
     text-align: center;
@@ -315,9 +343,9 @@ const Report2 = () => {
 
     dispatch(
       deleteFile({
-        scanId: "123",
-        fileName: "test.txt",
-        filePath: "/home/kichu/",
+        scanId: file.scan_id,
+        fileName: file.file_name,
+        filePath: file.file_path,
       })
     );
   };
@@ -326,9 +354,9 @@ const Report2 = () => {
     console.log("keeping file");
      dispatch(
       keepFile({
-        scanId: "123",
-        fileName: "nothing_to_see_1774594827.py",
-        filePath: "/home/kichu/Downloads/FILESS",
+        scanId: file.scan_id,
+        fileName: file.file_name,
+        filePath: file.file_path,
       })
     );
   }
@@ -337,7 +365,7 @@ const Report2 = () => {
     return <h2 className="no-data">No file data</h2>;
   }
 
-  const score = file.f_score;
+  const score = file.file_score;
 
   let riskText, riskColor;
 
@@ -369,12 +397,12 @@ const Report2 = () => {
           <div className="r2-card">
             <div className="r2-row">
               <span className="r2-key">File Name</span>
-              <span className="r2-value">{file.f_name}</span>
+              <span className="r2-value">{file.file_name}</span>
             </div>
 
             <div className="r2-row">
               <span className="r2-key">File Path</span>
-              <span className="r2-value">{file.f_path}</span>
+              <span className="r2-value">{file.file_path}</span>
             </div>
 
             <div className="r2-row">
@@ -398,10 +426,10 @@ const Report2 = () => {
 
             <div className="r2-row">
               <span className="r2-key">Status</span>
-              <span className="r2-value">{file.f_action}</span>
+              <span className="r2-value">{file.action}</span>
             </div>
 
-            {file.f_action !== "delete" && (
+            {file.action !== "delete" && (
               <div className="r2-actions">
                 <button className="r2-btn delete" onClick={()=>handleDelete()}>
                   Delete File

@@ -44,3 +44,4 @@ const devicesSlice = createSlice({
 
 export const { addDevice, updateDevice, deleteDevice } = devicesSlice.actions;
 export default devicesSlice.reducer;
+

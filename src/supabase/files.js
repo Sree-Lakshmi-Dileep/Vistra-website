@@ -14,6 +14,7 @@ export const useFilesSubscription = () => {
         "postgres_changes",
         { event: "*", schema: "public", table: "files" },
         (payload) => {
+          console.log("FILES SUB TRIGGERED:", payload);
         //   const { eventType, new: row } = payload;
 
         //   if (eventType === "INSERT" || eventType === "UPDATE") {

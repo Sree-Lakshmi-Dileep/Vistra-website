@@ -1,249 +1,88 @@
-// import React from 'react';
-// import AccountsIcon from '../assets/account.png';
-// import { useNavigate } from 'react-router-dom';
-
-// function Dblayer2() {
-//   const navigate = useNavigate();
-
-//   /* ---------- styles ---------- */
-//   const header = {
-//     display: 'flex',
-//     alignItems: 'center',
-//     justifyContent: 'space-between',
-//     padding: '1rem 1.5rem',
-//   };
-
-//   const account = {
-//     width: '40px',
-//     height: '40px',
-//     objectFit: 'contain',
-//   };
-
-//   const tabs = {
-//     display: 'flex',
-//     maxWidth: '400px',
-//     margin: '2rem auto',
-//     border: '2px solid #333',
-//     borderRadius: '8px',
-//     overflow: 'hidden',
-//   };
-
-//   const tab = {
-//     flex: 1,
-//     padding: '0.875rem 2rem',
-//     fontSize: '2rem',
-//     fontWeight: 500,
-//     backgroundColor: '#fff',
-//     border: 'none',
-//     display: 'flex',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     cursor: 'pointer',
-//   };
-
-//   const active = {
-//     backgroundColor: '#ffb3d9',
-//   };
-
-//   const content = {
-//     margin: '2rem',
-//     padding: '3rem 2rem',
-//     minHeight: '400px',
-//     backgroundColor: '#fff',
-//     borderRadius: '8px',
-//     display: 'flex',
-//     flexDirection: 'column',
-//     alignItems: 'center',
-//   };
-
-//   const title = {
-//     fontSize: '3rem',
-//     fontWeight: 700,
-//     marginBottom: '2rem',
-//   };
-
-//   /* ---------- handler ---------- */
-//   const handleReportClick = (file) => {
-//     console.log('Report clicked:', file);
-//     navigate('/reports', { state: { file } });
-//   };
-
-//   /* ---------- table component ---------- */
-//   const ReportTable = () => {
-//     const files = [
-//       // {
-//       //   f_name: 'hello',
-//       //   f_path: '/sys/class/net/ttx_errors',
-//       //   f_score: 30,
-//       //   f_action: 'quarantine',
-//       // },
-//       // {
-//       //   f_name: 'sree_lakshmi_dileep',
-//       //   f_path: '/sys/class/net/ttx_errors',
-//       //   f_score: 60,
-//       //   f_action: 'quarantine',
-//       // },
-//     ];
-//     if (!files||files.length==0){
-//       return(
-//         <div style={{
-//           marginTop: '3rem',
-//           fontSize: '1.4rem',
-//           fontWeight: 500,
-//           color: '#666',
-//           textAlign: 'center',
-//         }}>
-//         NO ALERT FOUND 
-//         </div>     
-//         );
-//       }
-//     return (
-//       <table
-//         style={{
-//           width: '100%',
-//           borderCollapse: 'collapse',
-//           tableLayout: 'fixed', // ⭐ IMPORTANT
-//         }}
-//         cellPadding="10"
-//       >
-//         <thead>
-//           <tr>
-//             <th style={{ width: '80px', textAlign: 'center' }}>Sl No</th>
-//             <th style={{ textAlign: 'center' }}>File Name</th>
-//             <th style={{ textAlign: 'center' }}>File Path</th>
-//             <th style={{ width: '100px', textAlign: 'center' }}>Score</th>
-//             <th style={{ width: '140px', textAlign: 'center' }}>Action</th>
-//             <th style={{ width: '120px', textAlign: 'center' }}>Report</th>
-//           </tr>
-//         </thead>
-
-//         <tbody>
-//           {files.map((file, index) => (
-//             <tr key={index}>
-//               <td
-//                 style={{
-//                   width: '80px',
-//                   textAlign: 'center',
-//                   verticalAlign: 'middle',
-//                   fontWeight: 500,
-//                 }}
-//               >
-//                 {index + 1}
-//               </td>
-
-//               <td
-//                 style={{
-//                   textAlign: 'center',
-//                   wordBreak: 'break-word',
-//                   overflowWrap: 'break-word',
-//                 }}
-//               >
-//                 {file.f_name}
-//               </td>
-
-//               <td
-//                 style={{
-//                   textAlign: 'center',
-//                   wordBreak: 'break-word',
-//                 }}
-//               >
-//                 {file.f_path}
-//               </td>
-
-//               <td style={{ textAlign: 'center' }}>{file.f_score}</td>
-
-//               <td style={{ textAlign: 'center' }}>{file.f_action}</td>
-
-//               <td style={{ textAlign: 'center' }}>
-//                 <button
-//                   onClick={() => handleReportClick(file)}
-//                   style={{
-//                     padding: '6px 14px',
-//                     backgroundColor: '#000',
-//                     color: '#fff',
-//                     border: 'none',
-//                     borderRadius: '4px',
-//                     cursor: 'pointer',
-//                   }}
-//                 >
-//                   Report
-//                 </button>
-//               </td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     );
-//   };
-
-//   /* ---------- JSX ---------- */
-//   return (
-//     <div>
-//       <div style={header}>
-//         <h2>Logo</h2>
-//         <img src={AccountsIcon} alt="account" style={account} />
-//       </div>
-
-//       <div style={tabs}>
-//         <div style={tab} onClick={() => navigate('/dblayer1')}>
-//           Layer 1
-//         </div>
-//         <div style={{ ...tab, ...active }}>Layer 2</div>
-//       </div>
-
-//       <div style={content}>
-//         <h1 style={title}>Layer 2</h1>
-//         <ReportTable />
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Dblayer2;
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import AboutBG from "../assets/about_image.png";
+import { fetchLayer2Files } from "../src/slice/progressSlice";
+
 
 /* ---------- SAME CSS FROM LAYER 1 ---------- */
 const styles = `
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
+gg
   .db2-root {
     min-height: 100vh;
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
     position: relative;
     color: white;
     font-family: 'Rajdhani', sans-serif;
+    overflow: hidden;
   }
 
   .db2-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0,0,0,0.85);
+    background: linear-gradient(135deg, rgba(0,4,20,0.92) 0%, rgba(0,15,40,0.88) 50%, rgba(5,0,20,0.92) 100%);
   }
 
   .db2-content {
     position: relative;
     padding: 2rem;
   }
+  //   .db2-corner {
+  //   position: absolute;
+  //   width: 60px;
+  //   height: 60px;
+  //   opacity: 0.5;
+  // }
+  // .db2-corner.tl { top: 16px; left: 16px; border-top: 2px solid #00b4ff; border-left: 2px solid #00b4ff; }
+  // .db2-corner.tr { top: 16px; right: 16px; border-top: 2px solid #00b4ff; border-right: 2px solid #00b4ff; }
+  // .db2-corner.bl { bottom: 16px; left: 16px; border-bottom: 2px solid #00b4ff; border-left: 2px solid #00b4ff; }
+  // .db2-corner.br { bottom: 16px; right: 16px; border-bottom: 2px solid #00b4ff; border-right: 2px solid #00b4ff; }
 
-  .db2-tabs {
+   .db2-tabs {
     display: flex;
-    margin-bottom: 2rem;
-    border: 1px solid rgba(0,180,255,0.3);
+    gap: 0;
+    margin-bottom: 2.5rem;
+    border: 1px solid rgba(0,180,255,0.25);
     width: fit-content;
+    position: relative;
   }
-
+  .db2-tabs::before {
+    content: 'DEFENSE BARRIER';
+    position: absolute;
+    top: -22px;
+    left: 0;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: rgba(0,180,255,0.4);
+    font-family: 'Share Tech Mono', monospace;
+  }
   .db2-tab {
-    padding: 0.7rem 2rem;
+    padding: 0.65rem 2.2rem;
     cursor: pointer;
-    background: transparent;
-    color: rgba(255,255,255,0.5);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.2s;
     border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.45);
+    position: relative;
   }
-
+  .db2-tab:hover {
+    color: white;
+    background: rgba(0,180,255,0.08);
+  }
   .db2-tab.active {
+    background: rgba(255,179,217,0.15);
     color: #ffb3d9;
     border-bottom: 2px solid #ffb3d9;
+  }
+  .db2-tab + .db2-tab {
+    border-left: 1px solid rgba(0,180,255,0.25);
   }
 
   .db2-table-card {
@@ -288,31 +127,38 @@ const styles = `
     letter-spacing: 2px;
   }
 `;
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 function Dblayer2() {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const dispatch = useDispatch();
   const handleReportClick = (file) => {
     navigate("/report2", { state: { file } });
   };
+  const files = useSelector((state) => state.files);
+  useEffect(() => {
+    console.log("yaay")
+    dispatch(fetchLayer2Files());
+  }, [dispatch]);
 
   const ReportTable = () => {
     // ✅ CORRECT ARRAY
-    const files = [
-      {
-        f_name: "hello",
-        f_path: "/sys/class/net/ttx_errors",
-        f_score: 30,
-        f_action: "quarantine",
-      },
-      {
-        f_name: "sree_lakshmi_dileep",
-        f_path: "/sys/class/net/ttx_errors",
-        f_score: 60,
-        f_action: "quarantine",
-      },
-    ];
+    // const files = [
+    //   {
+    //     f_name: "hello",
+    //     f_path: "/sys/class/net/ttx_errors",
+    //     f_score: 30,
+    //     f_action: "quarantine",
+    //   },
+    //   {
+    //     f_name: "sree_lakshmi_dileep",
+    //     f_path: "/sys/class/net/ttx_errors",
+    //     f_score: 60,
+    //     f_action: "quarantine",
+    //   },
+    // ];
 
     if (!files || files.length === 0) {
       return <div className="no-alert">NO ALERT FOUND</div>;
@@ -335,10 +181,10 @@ function Dblayer2() {
           {files.map((file, index) => (
             <tr key={index}>
               <td>{index + 1}</td>
-              <td>{file.f_name}</td>
-              <td>{file.f_path}</td>
-              <td>{file.f_score}</td>
-              <td>{file.f_action}</td>
+              <td>{file.file_name}</td>
+              <td>{file.file_path}</td>
+              <td>{file.file_score}</td>
+              <td>{file.action}</td>
               <td>
                 <button
                   className="report-btn"
