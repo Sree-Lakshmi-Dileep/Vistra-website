@@ -1174,11 +1174,13 @@ import { useWebSocketTask } from "../src/websocket/websocket";
 function Dblayer2() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const dispatch = useDispatch();
   // const [isScanning, setIsScanning] = useState(false);
   // //const [progress, setProgress] = useState(0);
   // const [scanCompleted, setScanCompleted] = useState(false);
   const [time, setTime] = useState(new Date());
-  const deviceId = "470a47234101453c97a2bf21a1ce62c4"
+  const deviceId = "c4e5752238794973b24661bf4e08ded8"
 
   const handleScanCompleted = () => {
     console.log("scan completed")
@@ -1196,7 +1198,7 @@ function Dblayer2() {
   scanCompleted
 } = useSelector((state) => state.progress);
 
-  const dispatch = useDispatch();
+  
 
   const handleScan = () => {
     console.log("SCAN BUTTON CLICKED");

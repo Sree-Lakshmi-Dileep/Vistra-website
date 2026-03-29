@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux";
 import { updateProgress, updateReport } from "../slice/progressSlice";
 import { useRef } from "react";
+import { v4 as uuidv4 } from "uuid"; 
 // let socket = null;   
 
 export const useWebSocketTask = (deviceId,handleScanCompleted) => {
@@ -18,10 +19,13 @@ export const useWebSocketTask = (deviceId,handleScanCompleted) => {
 const ws= new WebSocket(`ws://localhost:8000/ws/frontend/${deviceId}`);
 wsRef.current=ws;
 
+        const scanId = uuidv4();
+        console.log("Generated scan ID:", scanId);
+
 
         ws.onopen = () => {
             console.log("Connected");
-            ws.send(JSON.stringify({ event: "START_SCAN" })); // FIX: stringify
+            ws.send(JSON.stringify({ event: "START_SCAN", scan_id: scanId }));
         };
 
         ws.onmessage = (event) => {
@@ -34,7 +38,7 @@ wsRef.current=ws;
 
             if (data.event === "SCAN_COMPLETED") {
                 handleScanCompleted(); //closure to handle completion
-                // console.log("SCAN COMPLETED")
+                console.log("SCAN COMPLETED")
             }
 
             if (data.event == "FILE_COUNT"){
