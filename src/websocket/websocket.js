@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { updateProgress, updateReport } from "../slice/progressSlice";
+import { setScanId, updateProgress, updateReport } from "../slice/progressSlice";
 import { useRef } from "react";
 import { v4 as uuidv4 } from "uuid"; 
 // let socket = null;   
@@ -20,6 +20,7 @@ export const useWebSocketTask = (deviceId,handleScanCompleted) => {
         wsRef.current=ws;
 
         const scanId = uuidv4();
+        dispatch(setScanId({scanId: scanId}))
         console.log("Generated scan ID:", scanId);
 
 

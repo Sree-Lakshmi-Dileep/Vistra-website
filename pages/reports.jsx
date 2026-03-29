@@ -1,3 +1,137 @@
+// import React from "react";
+// import { useLocation } from "react-router-dom";
+// import {
+//   PieChart,
+//   Pie,
+//   Cell,
+//   BarChart,
+//   Bar,
+//   XAxis,
+//   YAxis,
+//   Tooltip,
+//   Legend
+// } from "recharts";
+
+// function Reports() {
+//   const { state } = useLocation();
+
+//   if (!state) {
+//     return <h2>No scan data available</h2>;
+//   }
+
+//   const {
+//     totalFiles,
+//     infectedFiles,
+//     deletedFiles,
+//     quarantinedFiles,
+//     low,
+//     medium,
+//     high,
+//     deletedList,
+//     quarantinedList
+//   } = state;
+
+//   /* ----------- PIE DATA ----------- */
+
+//   const severityData = [
+//     { name: "Low", value: low },
+//     { name: "Medium", value: medium },
+//     { name: "High", value: high }
+//   ];
+
+//   const infectionData = [
+//     { name: "Clean Files", value: totalFiles - infectedFiles },
+//     { name: "Infected Files", value: infectedFiles }
+//   ];
+
+//   const COLORS = ["green", "orange", "red"];
+
+//   const malwareDensity = ((infectedFiles / totalFiles) * 100).toFixed(2);
+
+//   return (
+//     <div style={{ padding: "2rem" }}>
+//       <h1>FULL SCAN REPORT</h1>
+
+//       {/* BASIC STATS */}
+//       <div style={{ marginTop: "1rem" }}>
+//         <p>Total Files Scanned: {totalFiles}</p>
+//         <p>Infected Files: {infectedFiles}</p>
+//         <p>Deleted Files: {deletedFiles}</p>
+//         <p>Quarantined Files: {quarantinedFiles}</p>
+//         <p>Malware Density: {malwareDensity}%</p>
+//       </div>
+
+//       {/* SEVERITY PIE CHART */}
+//       <h3 style={{ marginTop: "2rem" }}>
+//         YARA Hits & Severity Distribution
+//       </h3>
+
+//       <PieChart width={400} height={300}>
+//         <Pie
+//           data={severityData}
+//           dataKey="value"
+//           cx="50%"
+//           cy="50%"
+//           outerRadius={100}
+//           label
+//         >
+//           {severityData.map((entry, index) => (
+//             <Cell key={index} fill={COLORS[index]} />
+//           ))}
+//         </Pie>
+//         <Tooltip />
+//       </PieChart>
+
+//       {/* INFECTION PIE */}
+//       <h3>Clean vs Infected</h3>
+//       <PieChart width={400} height={300}>
+//         <Pie
+//           data={infectionData}
+//           dataKey="value"
+//           cx="50%"
+//           cy="50%"
+//           outerRadius={100}
+//           label
+//         >
+//           <Cell fill="#4CAF50" />
+//           <Cell fill="#F44336" />
+//         </Pie>
+//         <Tooltip />
+//       </PieChart>
+
+//       {/* BAR GRAPH */}
+//       <h3>File Action Summary</h3>
+//       <BarChart width={500} height={300} data={[
+//         { name: "Deleted", value: deletedFiles },
+//         { name: "Quarantined", value: quarantinedFiles }
+//       ]}>
+//         <XAxis dataKey="name" />
+//         <YAxis />
+//         <Tooltip />
+//         <Legend />
+//         <Bar dataKey="value" fill="#8884d8" />
+//       </BarChart>
+
+//       {/* DELETED FILES LIST */}
+//       <h3 style={{ marginTop: "2rem" }}>Deleted Files</h3>
+//       <ul>
+//         {deletedList.map((file, index) => (
+//           <li key={index}>{file}</li>
+//         ))}
+//       </ul>
+
+//       {/* QUARANTINED FILES LIST */}
+//       <h3>Quarantined Files</h3>
+//       <ul>
+//         {quarantinedList.map((file, index) => (
+//           <li key={index}>{file}</li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// }
+
+// export default Reports;
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -403,10 +537,11 @@ const styles = `
     margin-bottom: 0.3rem;
   }
 
-//   .av-density-wrap .av-density-info p {
-//   color: var(--muted);
-// }
-
+  .av-density-info p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
 
   /* ── FOOTER ── */
   .av-footer {
@@ -502,6 +637,17 @@ function Reports() {
   const scanId = latestScan?.[0];
 
   const report = reports.find(r => r[0] === scanId);
+
+  const files = useSelector(state => state.files); // get all files from Redux
+  console.log("files: ",files)
+  // Filter files belonging to this scan
+  // const deletedFileNames = files
+  //   .filter(f => f[1] === scanId && f[6] === "delete")
+  //   .map(f => f[3]); // file_name
+
+  // const quarantinedFileNames = files
+  //   .filter(f => f[1] === scanId && f[6] === "quarantine")
+  //   .map(f => f[3]);
   
 
   if (!report) {
@@ -534,14 +680,35 @@ function Reports() {
   const deletedFiles = report[4];        // deleted_files
   const quarantinedFiles = report[5];    // quarantined_files
   const malwareDensity = report[6];      // malware_density
-  const quarantinedList = report[7] || [];
-  const deletedList = report[8] || [];
+  
+  const deletedList = files
+  .filter(f => f.action === "delete")
+  .filter(f => f.scan_id === scanId)
+  .map(f => f.file_name);
+
+  const quarantinedList = files
+    .filter(f => f.action === "quarantine")
+    .filter(f => f.scan_id === scanId)
+    .map(f => f.file_name);
+  console.log("list: ", deletedFiles,quarantinedFiles)
   const threatLevel = parseFloat(malwareDensity) > 30 ? "critical" : parseFloat(malwareDensity) > 5 ? "warning" : "safe";
   const threatLabel = { critical: "⚠ Critical Threat", warning: "⚡ Elevated Risk", safe: "✔ System Safe" }[threatLevel];
 
-  const low = 0;
-  const medium = 0;
-  const high = 0;
+  // const low = 0;
+  // const medium = 0;
+  // const high = 0;
+
+  // Only take files that are infected (deleted or quarantined)
+  const infectedFileObjs = files.filter(f => f[6] === "quarantine" || f[6] === "delete");
+
+  let low = 0, medium = 0, high = 0;
+
+  infectedFileObjs.forEach(f => {
+    const score = f[5]; 
+    if (score <= 80) low++;
+    else if (score <= 150) medium++;
+    else high++;
+  });
 
   const severityData = [
     { name: "Low",    value: low,    fill: "#00ff9d" },
@@ -555,8 +722,8 @@ function Reports() {
   ];
 
   const actionData = [
-    { name: "Deleted", value: deletedFiles,     fill: "#ff3b6b" },
-    { name: "Quarantined", value: quarantinedFiles, fill: "#ffc107" }
+    { name: "Deleted", value: deletedList.length,     fill: "#ff3b6b" },
+    { name: "Quarantined", value: quarantinedList.length, fill: "#ffc107" }
   ];
 
 

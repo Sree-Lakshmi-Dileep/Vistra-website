@@ -10,13 +10,17 @@ const initialState = {
     high:0,
     isScanning: false,     
     scanCompleted: false,
-    behavioral_scanId: null
+    behavioral_scanId: null,
+    scan_id: null
 }
 
 const progressSlice = createSlice({
     name: "progress",
     initialState,
     reducers: {
+        setScanId: (state,action) => {
+            state.scan_id = action.payload.scan_id
+        },
         setBehavioralScanId: (state,action) => {
             state.behavioral_scanId = action.payload.scan_id
         },
@@ -46,7 +50,8 @@ export const {
   updateReport,
   startScan,
   completeScan,
-  setBehavioralScanId
+  setBehavioralScanId,
+  setScanId
 } = progressSlice.actions;
 export default progressSlice.reducer
 
