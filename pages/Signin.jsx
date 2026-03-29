@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../src/supabaseClient';
-
+import { useDispatch } from "react-redux";
+import { sendUserToBackend ,checkDevice} from "../src/slice/usersSlice";
 function Signin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  
 
   const handleSignin = async (e) => {
     e.preventDefault();
@@ -28,7 +31,9 @@ function Signin() {
   };
   const handleGoogleSignin = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
+    provider: "google",
+    options: {
+    redirectTo: "http://localhost:5173/signin"    },
   });
 
   if (error) {
@@ -36,6 +41,32 @@ function Signin() {
   }
 };
 
+
+const dispatch = useDispatch();
+
+useEffect(() => {
+  const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_IN" && session?.user) {
+      const user = session.user;
+
+      // Send to backend first
+      dispatch(sendUserToBackend({
+        user_id: user.id,
+        email: user.email,
+        username: user.user_metadata?.name || "No Name",
+      }))
+      .then(() => dispatch(checkDevice(user.id)));
+
+      // Navigate after login
+      navigate("/");
+    }
+
+    // Cleanup listener
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  });
+}, [dispatch, navigate]);
   /* STYLES */
   const page = {
     minHeight: '100vh',

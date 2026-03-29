@@ -41,6 +41,7 @@ export const useDevicesSubscription = () => {
           if (eventType === "INSERT") dispatch(addDevice(row));
           if (eventType === "UPDATE") dispatch(updateDevice(row));
           if (eventType === "DELETE") dispatch(deleteDevice(old.device_id));
+          
          }
      )
       .subscribe();

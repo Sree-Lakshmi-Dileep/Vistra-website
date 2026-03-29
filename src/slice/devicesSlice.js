@@ -1,6 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = [];
+const initialState = {
+  list: [],        
+  device: null,    
+};
 
 
 const devicesSlice = createSlice({
@@ -39,9 +42,13 @@ const devicesSlice = createSlice({
 
       console.log("After DELETE (2D Array in Slice):", JSON.stringify(state, null, 2));
     },
+
+    setDevice: (state, action) => {
+      state.device = action.payload;
+    }
   },
 });
 
-export const { addDevice, updateDevice, deleteDevice } = devicesSlice.actions;
+export const { addDevice, updateDevice, deleteDevice ,setDevice} = devicesSlice.actions;
 export default devicesSlice.reducer;
 

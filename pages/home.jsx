@@ -558,15 +558,26 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../src/supabaseClient';
 import HomeBG from '../assets/home_img.png';
 import AboutBG from '../assets/about_image.png';
+import { useSelector ,useDispatch} from "react-redux";
+import { setDevice } from "../src/slice/devicesSlice";
+
 import { useDispatch, useSelector } from 'react-redux';
 import { setBehavioralScanId } from '../src/slice/progressSlice';
 
 function Home() {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+
+  const device = useSelector(state => state.devices.device);
+  console.log("DEVICE:", device);
+
   const [showNav, setShowNav] = useState(false);
   const [session, setSession] = useState(null);
 
+  
+const dispatch = useDispatch();
+  
+
+  
   /* ---------- SCROLL ---------- */
   const scrollToSection = (id) => {
     const section = document.getElementById(id);
@@ -720,6 +731,33 @@ function Home() {
     color: '#fff',
   };
 
+  const downloadAllFiles = (userId) => {
+  fetch(`http://localhost:8000/api/download_all/${userId}`)
+    .then(res => res.blob())
+    .then(blob => {
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "agent_config.zip"; 
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    })
+    .catch(err => console.error(err));
+};
+
+const [loadingDevice, setLoadingDevice] = useState(true);
+
+useEffect(() => {
+  if (session) {
+    fetch(`http://localhost:8000/api/check_device/${session.user.id}`)
+      .then(res => res.json())
+      .then(data => {
+        dispatch(setDevice(data.deviceExists)); // ✅ store true/false
+        setLoadingDevice(false);
+})
+      .catch(() => setLoadingDevice(false));
+  }
+}, [session]);
   return (
     <div>
       {/* NAVBAR */}
@@ -741,6 +779,8 @@ function Home() {
 
       {/* AUTH SECTION */} 
        <div style={authBox}>
+      {/* AUTH SECTION */}
+       
         {!session ? (
           <>
             <button style={authBtn} onClick={() => navigate('/signin')}>
@@ -772,11 +812,30 @@ function Home() {
       </div>
 
       {/* HOME */}
-      <section id="home" style={homeStyle}>
-        <div style={hero}>
-          <h1 style={title}>VISTRA</h1>
-        </div>
-      </section>
+      {/* HOME */}
+<section id="home" style={homeStyle}>
+  <div style={hero}>
+    <h1 style={title}>VISTRA</h1>
+
+    {/* Show button only if logged in AND no device exists for this user */}
+   {session && !loadingDevice && (
+  device ? (
+    <p style={{ marginTop: "30px", color: "#00ffcc" }}>
+      
+    </p>
+  ) : (
+    <button
+      onClick={() => downloadAllFiles(session.user.id)}
+      style={{ ...authBtn, marginTop: '30px', border: '1px solid #00ffcc' }}
+    >
+      Download All Files
+    </button>
+  )
+)}
+
+    
+  </div>
+</section>
 
       {/* ABOUT */}
       <section id="about" style={aboutStyle}>

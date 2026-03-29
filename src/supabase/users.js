@@ -1,37 +1,45 @@
-// import { useEffect } from "react";
-// import { supabase } from "../supabaseClient";
-// import { useDispatch } from "react-redux";
-// import { addUser, updateUser, deleteUser } from "../slice/usersSlice";
+import { useEffect } from "react";
+import { supabase } from "../supabaseClient";
+import { useDispatch } from "react-redux";
+import { addUser, updateUser, deleteUser } from "../slice/usersSlice"; // ✅ fixed path
 
 
-// export const useUsersSubscription = () => { 
-//   const dispatch = useDispatch();
+ export const useUsersSubscription = () => { 
+  const dispatch = useDispatch();
 
-//   useEffect(() => {
-    
+  useEffect(() => {
+    const channel = supabase
+      .channel("users-channel")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "users" },
+        (payload) => {
+          console.log("Realtime payload:", payload);
 
-//     const channel = supabase
-//       .channel("users-channel")
-//       .on(
-//   "postgres_changes",
-//   { event: "*", schema: "public", table: "users" },
-//   (payload) => {
-//    //console.log("Realtime payload received:", payload);
+          const { eventType, new: newRow, old } = payload;
 
-//     const { eventType, new: row, old } = payload;
+          // ✅ Handle events
+          if (eventType === "INSERT") {
+            dispatch(addUser(newRow));
+          }
 
-//     if (eventType === "INSERT") dispatch(addUser(row));
-//     if (eventType === "UPDATE") dispatch(updateUser(row));
-//     if (eventType === "DELETE") dispatch(deleteUser(old.user_id));
-//   }
-// )
-//      .subscribe((status, err) => {
-//   console.log("STATUS:", status);
-//   console.log("ERROR:", err);
-// });
+          if (eventType === "UPDATE") {
+            dispatch(updateUser(newRow));
+          }
 
-//     return () => {
-//       supabase.removeChannel(channel);
-//     };
-//   }, []);
-// };
+          if (eventType === "DELETE") {
+            dispatch(deleteUser(old.user_id));
+          }
+        }
+      )
+      .subscribe((status, err) => {
+        console.log("STATUS:", status);
+        if (err) console.log("ERROR:", err);
+      });
+
+    // ✅ Cleanup
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [dispatch]); // ✅ added dependency
+};
