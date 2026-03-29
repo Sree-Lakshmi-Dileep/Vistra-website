@@ -5,7 +5,7 @@ import AboutBG from "../assets/about_image.png";
 /* ---------- SAME CSS FROM LAYER 1 ---------- */
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
-
+gg
   .db2-root {
     min-height: 100vh;
     background-size: cover;
