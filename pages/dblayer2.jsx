@@ -203,6 +203,8 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import AboutBG from "../assets/about_image.png";
+import { fetchLayer2Files } from "../src/slice/progressSlice";
+
 
 /* ---------- SAME CSS FROM LAYER 1 ---------- */
 const styles = `
@@ -288,31 +290,38 @@ const styles = `
     letter-spacing: 2px;
   }
 `;
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 function Dblayer2() {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const dispatch = useDispatch();
   const handleReportClick = (file) => {
     navigate("/report2", { state: { file } });
   };
+  const files = useSelector((state) => state.files);
+  useEffect(() => {
+    console.log("yaay")
+    dispatch(fetchLayer2Files());
+  }, [dispatch]);
 
   const ReportTable = () => {
     // ✅ CORRECT ARRAY
-    const files = [
-      {
-        f_name: "hello",
-        f_path: "/sys/class/net/ttx_errors",
-        f_score: 30,
-        f_action: "quarantine",
-      },
-      {
-        f_name: "sree_lakshmi_dileep",
-        f_path: "/sys/class/net/ttx_errors",
-        f_score: 60,
-        f_action: "quarantine",
-      },
-    ];
+    // const files = [
+    //   {
+    //     f_name: "hello",
+    //     f_path: "/sys/class/net/ttx_errors",
+    //     f_score: 30,
+    //     f_action: "quarantine",
+    //   },
+    //   {
+    //     f_name: "sree_lakshmi_dileep",
+    //     f_path: "/sys/class/net/ttx_errors",
+    //     f_score: 60,
+    //     f_action: "quarantine",
+    //   },
+    // ];
 
     if (!files || files.length === 0) {
       return <div className="no-alert">NO ALERT FOUND</div>;
@@ -335,10 +344,10 @@ function Dblayer2() {
           {files.map((file, index) => (
             <tr key={index}>
               <td>{index + 1}</td>
-              <td>{file.f_name}</td>
-              <td>{file.f_path}</td>
-              <td>{file.f_score}</td>
-              <td>{file.f_action}</td>
+              <td>{file.file_name}</td>
+              <td>{file.file_path}</td>
+              <td>{file.file_score}</td>
+              <td>{file.action}</td>
               <td>
                 <button
                   className="report-btn"

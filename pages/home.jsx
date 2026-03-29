@@ -558,10 +558,12 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../src/supabaseClient';
 import HomeBG from '../assets/home_img.png';
 import AboutBG from '../assets/about_image.png';
+import { useDispatch, useSelector } from 'react-redux';
+import { setBehavioralScanId } from '../src/slice/progressSlice';
 
 function Home() {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch()
   const [showNav, setShowNav] = useState(false);
   const [session, setSession] = useState(null);
 
@@ -572,6 +574,32 @@ function Home() {
       section.scrollIntoView({ behavior: 'smooth' });
     }
   };
+  const userId = useSelector((state) => state.users.userId);
+  useEffect(() => {
+    const fetchLatestScan = async () => {
+      if (!userId) return; // 🔥 important guard
+
+      const { data, error } = await supabase
+        .from("scans")
+        .select("*")
+        .eq("user_id", "krishnan")
+        .eq("layer", 2)
+         // ✅ filter by user
+        .order("started_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(data)
+        console.log("Scan id: ", data?.scan_id)
+        dispatch(setBehavioralScanId({scan_id:  data?.scan_id}))
+      }
+    };
+
+    fetchLatestScan();
+  }, [userId]);
 
   /* ---------- LOGOUT ---------- */
   const handleLogout = async () => {

@@ -12,12 +12,12 @@ export const useWebSocketTask = (deviceId,handleScanCompleted) => {
         // const ws = new WebSocket(`ws://10.107.190.46:8000/ws/frontend/${deviceId}`);
         // wsRef.current = ws;
         if (wsRef.current) {
-    console.log("Socket already running");
-    return;
-}
+            console.log("Socket already running");
+            return;
+        }
 
-const ws= new WebSocket(`ws://localhost:8000/ws/frontend/${deviceId}`);
-wsRef.current=ws;
+        const ws= new WebSocket(`ws://localhost:8000/ws/frontend/${deviceId}`);
+        wsRef.current=ws;
 
         const scanId = uuidv4();
         console.log("Generated scan ID:", scanId);
@@ -34,7 +34,6 @@ wsRef.current=ws;
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log("message from backend:",data)
-            
             if (data.event === "SCAN_PROGRESS") {
                 dispatch(updateProgress({ progress: data.value }));
                 console.log("progress:", data.value); // FIX
@@ -43,7 +42,6 @@ wsRef.current=ws;
             if (data.event === "SCAN_COMPLETED") {
                 console.log("SCAN COMPLETED")
                  //closure to handle completion
-               
             }
 
             if (data.event == "FILE_COUNT"){

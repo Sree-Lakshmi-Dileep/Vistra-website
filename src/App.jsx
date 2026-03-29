@@ -12,7 +12,7 @@ import Reports from "../pages/reports";
 import { useDevicesSubscription } from "./supabase/devices";
 import { useFilesSubscription } from "./supabase/files";
 import { useScansSubscription } from "./supabase/scans";
-import { useUsersSubscription } from "./supabase/users";
+// import { useUsersSubscription } from "./supabase/users";
 import { useReportsSubscription } from "./supabase/reports";
 
 
@@ -22,7 +22,7 @@ function App() {
   useDevicesSubscription();
   useFilesSubscription();
   useScansSubscription();
-  useUsersSubscription();
+  // useUsersSubscription();
   useReportsSubscription();
 
   return (

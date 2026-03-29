@@ -459,3 +459,4 @@ export const {
 } = scansSlice.actions;
 
 export default scansSlice.reducer;
+

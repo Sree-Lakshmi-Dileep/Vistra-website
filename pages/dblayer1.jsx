@@ -1187,7 +1187,7 @@ function Dblayer2() {
   // //const [progress, setProgress] = useState(0);
   // const [scanCompleted, setScanCompleted] = useState(false);
   const [time, setTime] = useState(new Date());
-  const deviceId = "c4e5752238794973b24661bf4e08ded8"
+  const deviceId = "470a47234101453c97a2bf21a1ce62c4"
 
   const handleScanCompleted = () => {
     console.log("scan completed")
@@ -1204,11 +1204,6 @@ function Dblayer2() {
   isScanning,
   scanCompleted
 } = useSelector((state) => state.progress);
-
-console.log("scans:", scans);
-console.log("progress:", progress);
-
-  
 
   const handleScan = () => {
     console.log("SCAN BUTTON CLICKED");

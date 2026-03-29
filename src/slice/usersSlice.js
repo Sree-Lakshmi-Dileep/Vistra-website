@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = [];
+const initialState = {
+  userId: "krishnan"
+}
 
 
 const usersSlice = createSlice({
@@ -48,8 +50,11 @@ const usersSlice = createSlice({
         JSON.stringify(state, null, 2)
       );
     },
+    setUserId: (state, action) => {
+      state.userId = action.payload;
+    }
   },
 });
 
-export const { addUser, updateUser, deleteUser } = usersSlice.actions;
+export const { addUser, updateUser, deleteUser, setUserId } = usersSlice.actions;
 export default usersSlice.reducer;
