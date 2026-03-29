@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useDispatch } from "react-redux";
 import { addScan, updateScan, deleteScan } from "../slice/scansSlice";
+console.log("addScan:" , addScan)
 
 
 export const useScansSubscription = () => {
@@ -15,6 +16,11 @@ export const useScansSubscription = () => {
         "postgres_changes",
         { event: "*", schema: "public", table: "scans" },
         (payload) => {
+          console.log("SCANS SUB TRIGGERED:", payload)
+          
+
+          
+
           // const { eventType, new: row } = payload;
 
           // if (eventType === "INSERT" || eventType === "UPDATE") {

@@ -13,6 +13,7 @@ import { useDevicesSubscription } from "./supabase/devices";
 import { useFilesSubscription } from "./supabase/files";
 import { useScansSubscription } from "./supabase/scans";
 import { useUsersSubscription } from "./supabase/users";
+import { useReportsSubscription } from "./supabase/reports";
 
 
 
@@ -22,6 +23,7 @@ function App() {
   useFilesSubscription();
   useScansSubscription();
   useUsersSubscription();
+  useReportsSubscription();
 
   return (
   

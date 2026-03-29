@@ -133,7 +133,8 @@
 
 // export default Reports;
 import React, { useState, useEffect } from "react";
-import { useLocation ,useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   PieChart, Pie, Cell, BarChart, Bar,
   XAxis, YAxis, Tooltip, Legend, ResponsiveContainer
@@ -625,39 +626,57 @@ const DensityRing = ({ pct }) => {
 
 /* ─── MAIN COMPONENT ─────────────────────────────────────────── */
 function Reports() {
-  const { state } = useLocation();
+  //const { state } = useLocation();
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
-  if (!state) {
-    return (
-      <>
-        <style>{styles}</style>
-        <div className="av-report">
-          <div className="av-content" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "60vh", gap: "1rem" }}>
-            <div style={{ fontSize: "3rem" }}>🛡️</div>
-            <p style={{ fontFamily: "var(--font-head)", fontSize: "1.5rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--muted)" }}>
-              No Scan Data Available
-            </p>
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--muted)" }}>
-              Run a full system scan to generate a report.
-            </p>
-          </div>
-        </div>
-      </>
-    );
+  const reports = useSelector(state => state.reports);
+  const scans = useSelector(state => state.scans.scans);
+
+  const latestScan = scans[scans.length -1];
+  const scanId = latestScan?.[0];
+
+  const report = reports.find(r => r[0] === scanId);
+  
+
+  if (!report) {
+  return <h2>Loading...</h2>;
   }
 
-  const {
-    totalFiles = 0, infectedFiles = 0, deletedFiles = 0,
-    quarantinedFiles = 0, low = 0, medium = 0, high = 0,
-    deletedList = [], quarantinedList = []
-  } = state;
+  // if (!state) {
+  //   return (
+  //     <>
+  //       <style>{styles}</style>
+  //       <div className="av-report">
+  //         <div className="av-content" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "60vh", gap: "1rem" }}>
+  //           <div style={{ fontSize: "3rem" }}>🛡️</div>
+  //           <p style={{ fontFamily: "var(--font-head)", fontSize: "1.5rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--muted)" }}>
+  //             No Scan Data Available
+  //           </p>
+  //           <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--muted)" }}>
+  //             Run a full system scan to generate a report.
+  //           </p>
+  //         </div>
+  //       </div>
+  //     </>
+  //   );
+  // }
 
-  const cleanFiles = totalFiles - infectedFiles;
-  const malwareDensity = totalFiles ? ((infectedFiles / totalFiles) * 100).toFixed(1) : "0.0";
+  
+  const totalFiles = report[1];          // files_scanned
+  const infectedFiles = report[2];       // infected_files
+  const cleanFiles = report[3];          // clean_files
+  const deletedFiles = report[4];        // deleted_files
+  const quarantinedFiles = report[5];    // quarantined_files
+  const malwareDensity = report[6];      // malware_density
+  const quarantinedList = report[7] || [];
+  const deletedList = report[8] || [];
   const threatLevel = parseFloat(malwareDensity) > 30 ? "critical" : parseFloat(malwareDensity) > 5 ? "warning" : "safe";
   const threatLabel = { critical: "⚠ Critical Threat", warning: "⚡ Elevated Risk", safe: "✔ System Safe" }[threatLevel];
+
+  const low = 0;
+  const medium = 0;
+  const high = 0;
 
   const severityData = [
     { name: "Low",    value: low,    fill: "#00ff9d" },
@@ -890,7 +909,7 @@ const handleFileClick = (fileName,status) => {
           {/* ── FOOTER ── */}
           <div className="av-footer">
             <p>THREATSCAN PRO — <span>FULL SYSTEM ANALYSIS</span></p>
-            <p>SCAN ID: <span>{Math.random().toString(36).slice(2, 10).toUpperCase()}</span></p>
+            <p>SCAN ID: <span>{scanId}</span></p>
             <p>GENERATED: <span>{now.toISOString().slice(0, 19).replace("T", " ")}</span></p>
           </div>
 
