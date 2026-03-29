@@ -65,6 +65,7 @@ export const fetchLayer2Files = () => async (dispatch, getState) => {
       .from("files")
       .select("*")
       .eq("layer", 2)
+      .eq("scan_id",scanId)
      
 
     if (error) {
