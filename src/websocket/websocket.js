@@ -25,7 +25,10 @@ wsRef.current=ws;
 
         ws.onopen = () => {
             console.log("Connected");
-            ws.send(JSON.stringify({ event: "START_SCAN", scan_id: scanId }));
+            ws.send(JSON.stringify({ 
+                event: "START_SCAN", 
+                scan_id: scanId, 
+                device_id: deviceId }));
         };
 
         ws.onmessage = (event) => {
@@ -37,12 +40,14 @@ wsRef.current=ws;
             }
 
             if (data.event === "SCAN_COMPLETED") {
-                handleScanCompleted(); //closure to handle completion
                 console.log("SCAN COMPLETED")
+                 //closure to handle completion
+               
             }
 
             if (data.event == "FILE_COUNT"){
                 console.log("File result reached");
+                handleScanCompleted();
                 console.log("DATA: ", data.value)
                 const totalThreats = data.value.totalThreats;
                 const low = data.value.safe;
