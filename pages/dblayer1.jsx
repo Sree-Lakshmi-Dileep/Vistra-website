@@ -1171,16 +1171,23 @@ const styles = `
   }
 `;
 import { useWebSocketTask } from "../src/websocket/websocket";
+
+
+
 function Dblayer2() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const scans = useSelector((state) => state.scans.scans); 
+  const latestScan = scans?.[scans.length - 1];
+  const scan_id = latestScan?.[0];
 
   const dispatch = useDispatch();
   // const [isScanning, setIsScanning] = useState(false);
   // //const [progress, setProgress] = useState(0);
   // const [scanCompleted, setScanCompleted] = useState(false);
   const [time, setTime] = useState(new Date());
-  const deviceId = "470a47234101453c97a2bf21a1ce62c4"
+  const deviceId = "c4e5752238794973b24661bf4e08ded8"
 
   const handleScanCompleted = () => {
     console.log("scan completed")
@@ -1197,6 +1204,9 @@ function Dblayer2() {
   isScanning,
   scanCompleted
 } = useSelector((state) => state.progress);
+
+console.log("scans:", scans);
+console.log("progress:", progress);
 
   
 
@@ -1226,12 +1236,12 @@ function Dblayer2() {
   //   return () => clearInterval(timer);
   // }, [isScanning, progress]);
 
-  const scanData = {
-    totalFiles: 1000, infectedFiles: 75, deletedFiles: 20,
-    quarantinedFiles: 55, low: 23, medium: 41, high: 11,
-    deletedList: ["virus1.exe", "trojan.dll"],
-    quarantinedList: ["ransomware.tmp", "spyware.sys"],
-  };
+  // const scanData = {
+  //   totalFiles: 1000, infectedFiles: 75, deletedFiles: 20,
+  //   quarantinedFiles: 55, low: 23, medium: 41, high: 11,
+  //   deletedList: ["virus1.exe", "trojan.dll"],
+  //   quarantinedList: ["ransomware.tmp", "spyware.sys"],
+  // };
 
   const R = 90;
   const CIRC = 2 * Math.PI * R;
@@ -1363,7 +1373,7 @@ function Dblayer2() {
 
                   <button
                     className="db2-report-btn"
-                    onClick={() => navigate("/reports", { state: scanData })}
+                    onClick={() => navigate("/reports", { state: {scan_id} })}
                   >
                     View Full Report →
                   </button>

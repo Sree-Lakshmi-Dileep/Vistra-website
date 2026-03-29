@@ -34,6 +34,7 @@ wsRef.current=ws;
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log("message from backend:",data)
+            
             if (data.event === "SCAN_PROGRESS") {
                 dispatch(updateProgress({ progress: data.value }));
                 console.log("progress:", data.value); // FIX
